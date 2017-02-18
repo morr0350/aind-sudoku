@@ -13,10 +13,11 @@ boxes = cross(rows, cols)
 row_units = [cross(r, cols) for r in rows]
 column_units = [cross(rows, c) for c in cols]
 square_units = [cross(rs, cs) for rs in ('ABC', 'DEF', 'GHI') for cs in ('123', '456', '789')]
-unitlist = row_units + column_units + square_units
+diag_unit_positive = [[x+y for x in rows for y in cols if (8-rows.index(x)) == cols.index(y)]]
+diag_unit_negative = [[x+y for x in rows for y in cols if rows.index(x) == cols.index(y)]]
+unitlist = row_units + column_units + square_units + diag_unit_positive + diag_unit_negative
 units = dict((s, [u for u in unitlist if s in u]) for s in boxes)
 peers = dict((s, set(sum(units[s], [])) - set([s])) for s in boxes)
-
 
 def assign_value(values, box, value):
     """
@@ -91,7 +92,8 @@ def grid_values(grid):
             Keys: The boxes, e.g., 'A1'
             Values: The value in each box, e.g., '8'. If the box has no value, then the value will be '123456789'.
     """
-    return dict(zip(boxes, grid))
+    grid_dict = dict(zip(boxes, grid))
+    return {x: y.replace('.', '123456789') for x,y in grid_dict.items()}
 
 
 def display(values):
@@ -100,7 +102,8 @@ def display(values):
     Args:
         values(dict): The sudoku in dictionary form
     """
-    pass
+    from PySudoku import play
+    play(assignments)
 
 
 def eliminate(values):
@@ -108,7 +111,9 @@ def eliminate(values):
         if len(values[box]) == 1:
             for peer in peers[box]:
                 # values[peer] = values[peer].replace(values[box], "")
-                values = assign_value(values, peer, values[peer].replace(values[box], ""))
+                if len(values[peer]) > 1:
+                    values = assign_value(values, peer, values[peer].replace(values[box], ""))
+    values = naked_twins(values)
     return values
 
 
