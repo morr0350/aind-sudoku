@@ -36,3 +36,14 @@ To visualize your solution, please only assign values to the values_dict using t
 ### Data
 
 The data consists of a text file of diagonal sudokus for you to solve.
+
+Project questions:
+1) How do we apply constraint propagation to solve the naked twins problem?
+We apply constraint propagation to solve the naked twins problem by considering the local problem space (the current row
+or column) for each box and applying the constraint (peer boxes cannot contain either of the two digits present in
+ the naked twin boxes) to that local space.  We do this for the entire problem space to reduce the problem size.
+2) How do we apply constraint propagation to solve the diagonal sudoku problem?
+We apply constraint propagation to solve the diagonal sudoku problem by considering the local problem space of the
+diagonals (positive: lower right to upper left, and negative: upper left to lower right) for any box contained in
+one of those diagonals.  We add this to the overall local problem space of each box, so that if any box is in a
+diagonal, its local space is increased to add the diagonal sudoku constraint.
