@@ -7,7 +7,9 @@ def cross(A, B):
     "Cross product of elements in A and elements in B."
     return [s + t for s in A for t in B]
 
-
+"""
+Set up collections to hold game board box references
+"""
 boxes = cross(rows, cols)
 
 row_units = [cross(r, cols) for r in rows]
@@ -107,6 +109,11 @@ def display(values):
 
 
 def eliminate(values):
+    """
+    :param values(dict): a dictionary of the form {'box_name': '123456789', ...}
+    :return: values dict or False
+    Apply constraint that if a box has a value assigned, then none of the peers of this box can have this value.
+    """
     for box in values.keys():
         if len(values[box]) == 1:
             for peer in peers[box]:
@@ -116,8 +123,12 @@ def eliminate(values):
     values = naked_twins(values)
     return values
 
-
 def only_choice(values):
+    """
+    :param values(dict): a dictionary of the form {'box_name': '123456789', ...}
+    :return: values dict or False
+    Apply constraint that every local space unit must contain exactly one occurrence of every number
+    """
     for unit in unitlist:
         for digit in '123456789':
             dplaces = [box for box in unit if digit in values[box]]
@@ -128,6 +139,12 @@ def only_choice(values):
 
 
 def reduce_puzzle(values):
+    """
+    :param values(dict): a dictionary of the form {'box_name': '123456789', ...}
+    :return: values dict or False
+    Applies constraints to reduce the game board problem size (solve or partially solve
+    as many sudoku squares as possible)
+    """
     stalled = False
     while not stalled:
         # Check how many boxes have a determined value
@@ -149,7 +166,11 @@ def reduce_puzzle(values):
 
 
 def search(values):
-    "Using depth-first search and propagation, create a search tree and solve the sudoku."
+    """
+    :param values: game board dict
+    :return: values dict or False
+    Using depth-first search and propagation, create a search tree and solve the sudoku.
+    """
     # First, reduce the puzzle using the previous function
     values = reduce_puzzle(values)
     if values is False:
